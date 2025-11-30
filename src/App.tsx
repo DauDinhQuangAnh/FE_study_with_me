@@ -7,8 +7,8 @@ import MusicPlayer from "./assets/components/MusicPlayer";
 import Lobby from "./assets/components/lobby/Lobby";
 
 function App() {
-  const LIVEKIT_URL = "ws://13.212.173.167:7880";
-  const API_URL = "http://13.212.173.167:3000/api";
+  const LIVEKIT_URL = "wss://live.chatbotuit.me";
+  const API_URL = "https://api.chatbotuit.me/api";
   const [roomToken, setRoomToken] = useState("");
   const [username, setUsername] = useState("");
   const [authToken, setAuthToken] = useState<string | null>(null);
