@@ -14,34 +14,27 @@ function App() {
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
 
-// SỬA ĐỔI LOGIC VÀO PHÒNG
-const joinRoom = async (roomId: string) => {
-  try {
-    // BƯỚC 1: Báo cho Backend biết mình vào phòng (Để lưu lịch sử)
-    await fetch(`${API_URL}/rooms/${roomId}/join`, {
-      method: 'POST',
-      headers: { 
-        'Authorization': `Bearer ${authToken}`, // Token đăng nhập
-        'Content-Type': 'application/json'
+  const joinRoom = async (roomName: string) => {
+    if (!username) return alert("Vui lòng nhập tên bạn trước!");
+    try {
+      const resp = await fetch(
+        `${API_URL}/getToken?name=${encodeURIComponent(username)}&room=${encodeURIComponent(roomName)}`
+      );
+
+      const data = await resp.json();
+
+      if (data.token) {
+        setRoomToken(data.token);
+      } else {
+        alert("Không lấy được token!");
       }
-    });
+    } catch (e) {
+      console.error(e);
+      alert("Không thể vào phòng!");
+    }
+  };
 
-    // BƯỚC 2: Lấy Token Video (LiveKit)
-    // Lưu ý: API mới của bạn yêu cầu query param là 'name' và 'room'
-    const userJson = localStorage.getItem('user');
-    const user = JSON.parse(userJson || '{}');
-    
-    const resp = await fetch(`${API_URL}/livekit/token?room=${roomId}&name=${user.username}`);
-    const data = await resp.json();
-
-    // BƯỚC 3: Kết nối Video
-    setRoomToken(data.token);
-
-  } catch (error) {
-    alert("Lỗi không thể vào phòng: " + (error instanceof Error ? error.message : String(error)));
-  }
-};
-
+  
   const handleAuthSuccess = ({ token, user }: { token: string; user: AuthUser }) => {
     setAuthToken(token);
     setCurrentUser(user);
